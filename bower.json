@@ -1,6 +1,6 @@
 {
-  "name": "FlatFileViewerAndEditor",
-  "version": "0.9.1",
+  "name": "flat-file-data-extractor",
+  "version": "0.1.0",
   "main" : "bundle.js",
   "ignore": [
     "bower.json",
@@ -13,9 +13,7 @@
     "ods.js",
     "README.md",
     "webpack.config.js",
-    "worker.js",
     "xlsx.js",
-    "xlsxworker2.js",
     "xml.js"
   ]
 }
