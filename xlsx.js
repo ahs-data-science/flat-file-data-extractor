@@ -11206,7 +11206,8 @@ var fix_read_opts = fix_opts_func([
 	['cellHTML', true], /* emit html string as .h */
 	['cellFormula', true], /* emit formulae as .f */
 	['cellStyles', false], /* emits style/theme as .s */
-	['cellDates', false], /* emit date cells with type `d` */
+	//['cellDates', false], /* emit date cells with type `d` */ peyman
+	['cellDates', true], /* emit date cells with type `d` */
 
 	['sheetStubs', false], /* emit empty cells */
 	['sheetRows', 0, 'n'], /* read n rows (0 = read all rows) */
@@ -11223,7 +11224,8 @@ var fix_read_opts = fix_opts_func([
 
 
 var fix_write_opts = fix_opts_func([
-	['cellDates', false], /* write date cells with type `d` */
+	//['cellDates', false], /* write date cells with type `d` */
+	['cellDates', true], /* write date cells with type `d` */
 
 	['bookSST', false], /* Generate Shared String Table */
 
@@ -11913,6 +11915,10 @@ function loadTable(sheet, table) {
       })];
       var cell;
       if (val){
+				// if (val.t == "n" && val.w != undefined) {
+				// 	console.log(val);
+				// 	console.log(Date.parse(val.w));
+				// }
         cell = new Table.Cell(val.v, val.t, row, col);
       } else {
         cell = new Table.Cell(null, undefined, row, col);

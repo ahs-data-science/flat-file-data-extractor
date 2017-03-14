@@ -773,7 +773,7 @@ function jsonExport() {
   var table = this.table;
   var jsonObj = {};
   // set tableName
-  jsonObj.tableName = tv.meta.tableName;
+  jsonObj.name = tv.meta.tableName;
   jsonObj.columns = new Array();
   // set columns
   for (var i = 0; i < tv.columnTypes.length; i++) {
