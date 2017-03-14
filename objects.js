@@ -96,7 +96,7 @@ function TableView(table) {
   this.changeHeaderValue = changeHeaderValue;
   this.setTableName = setTableName;
   this.simpleUndo = simpleUndo;
-  this.export = to_json;
+  this.export = jsonExport;
   this.cloneMergeCells = cloneMergeCells;
   this.rotate = rotate;
 }
@@ -768,7 +768,7 @@ function reset() {
   this.initTableView();
 }
 
-function to_json() {
+function jsonExport() {
   var tv = this;
   var table = this.table;
   var jsonObj = {};
@@ -778,7 +778,23 @@ function to_json() {
   // set columns
   for (var i = 0; i < tv.columnTypes.length; i++) {
     var column = {};
-    column.type = tv.columnTypes[i];
+    switch (tv.columnTypes[i]) {
+      case 's':
+        column.type = "string";
+        break;
+      case 'n':
+        column.type = "numeric";
+        break;
+      case 'd':
+        column.type = "date";
+        break;
+      case 'b':
+        column.type = "boolean";
+        break;
+      default:
+        column.type = "undefined";
+    }
+
     var cName = "";
     for (var j = 0; j <= tv.headerDepth; j++) {
       cName += tv.rows[j][i] + " ";

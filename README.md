@@ -12,7 +12,7 @@ You should call FlatFileApi.process_file(file, callbackFunc) to process a file. 
 sample code for using the api:
 ```js
 var file; // input flat file
-FlatFileApi.process_file(file, function(tables) {
+FlatFileApi.processFile(file, function(tables) {
 	console.log(tables);
 });
 ```
