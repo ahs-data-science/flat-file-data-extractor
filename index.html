@@ -255,7 +255,7 @@
 			// });
 			//var worker = new Worker("xlsxworker2.js");
 			var tables;
-			FlatFileApi.process_file(f, function(res) {
+			FlatFileApi.processFile(f, function(res) {
 				tbl = res;
 				console.log(tbl);
 				showData(tbl[0]);
@@ -328,7 +328,7 @@
 		}
 
 		function toJsonObjeect() {
-			var j = tbl[0].to_json();
+			var j = tbl[0].export();
 			console.log(j);
 		}
 

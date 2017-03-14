@@ -8,24 +8,23 @@ Put this script on the top of your code:
 <script lang="javascript" src="bundle.js"></script>
 ```
 
-You should call FlatFileApi.process_file(file, callbackFunc) to process a file. It will return a list of TableView object that can be shown. 
+You should call FlatFileApi.process_file(file, callbackFunc) to process a file. It will return a list of TableView object that can be shown.
 sample code for using the api:
 ```js
 var file; // input flat file
-FlatFileApi.process_file(file, function(tables)) {
+FlatFileApi.process_file(file, function(tables) {
 	console.log(tables);
-}
+});
 ```
 
 ## Extracted data
-some cherts
-
+You can access the rows, columnTypes
 ## Processing methods
 You can call these methods on each TableView objects:
 ```js
 var tbl = tables[0];
 /*  
-process a table for detecet headers and data types 
+process a table for detecet headers and data types
 it is not good enough yet!!
 */
 tbl.process();

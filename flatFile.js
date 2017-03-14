@@ -54,7 +54,7 @@ function getFileExtension(filename) {
 }
 
 module.exports = {
-  process_file: function (f, cb) {
+  processFile: function (f, cb) {
     var flag = 0;
 
     var reader = new FileReader();

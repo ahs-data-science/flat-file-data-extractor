@@ -6120,7 +6120,7 @@ function TableView(table) {
   this.changeHeaderValue = changeHeaderValue;
   this.setTableName = setTableName;
   this.simpleUndo = simpleUndo;
-  this.to_json = to_json;
+  this.export = to_json;
   this.cloneMergeCells = cloneMergeCells;
   this.rotate = rotate;
 }
@@ -19067,7 +19067,7 @@ function getColumnsType(sheet, range, headerDepth) {
 	return typeOfCols;
 }
 
-  
+
 function loadTable(sheet, table) {
   if (sheet == null) {
 		// error
@@ -19083,8 +19083,8 @@ function loadTable(sheet, table) {
     var col = new Table.Column();
     table.cols.push(col);
   }
-  
-  // set cells & col.uniqueValues 
+
+  // set cells & col.uniqueValues
   for (R = 0; R < table.rows.length; R++) {
     row = table.rows[R];
     for (C = 0; C < table.cols.length; C++) {
@@ -19103,7 +19103,7 @@ function loadTable(sheet, table) {
       col.cells.push(cell);
     }
   }
-  
+
   // set mergedCells
   var mergedCells = sheet["!merges"];
   if (mergedCells){
@@ -19111,7 +19111,7 @@ function loadTable(sheet, table) {
   } else {
     table.meta.mergedCells = null;
   }
-  
+
   return 0;
 }
 
@@ -19419,8 +19419,6 @@ XLSX.loadTable = loadTable;
 })( true ? exports : XLSX);
 
 var XLS = XLSX;
-
-
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0).Buffer))
 
@@ -45970,7 +45968,7 @@ function getFileExtension(filename) {
 }
 
 module.exports = {
-  process_file: function (f, cb) {
+  processFile: function (f, cb) {
     var flag = 0;
 
     var reader = new FileReader();

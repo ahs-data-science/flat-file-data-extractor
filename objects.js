@@ -96,7 +96,7 @@ function TableView(table) {
   this.changeHeaderValue = changeHeaderValue;
   this.setTableName = setTableName;
   this.simpleUndo = simpleUndo;
-  this.to_json = to_json;
+  this.export = to_json;
   this.cloneMergeCells = cloneMergeCells;
   this.rotate = rotate;
 }
