@@ -1,0 +1,21 @@
+{
+  "name": "FlatFileViewerAndEditor",
+  "version": "0.9.1",
+  "main" : "bundle.js",
+  "ignore": [
+    "bower.json",
+    "csv.js",
+    "flatFile.js",
+    "index.html",
+    "json.js",
+    "jszip.js",
+    "objects.js",
+    "ods.js",
+    "README.md",
+    "webpack.config.js",
+    "worker.js",
+    "xlsx.js",
+    "xlsxworker2.js",
+    "xml.js"
+  ]
+}

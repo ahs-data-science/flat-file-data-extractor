@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<title>Flat File demo</title>
+		<meta charset="utf-8">
+		<style>
+			#drop {
+				border:2px dashed #bbb;
+				-moz-border-radius:5px;
+				-webkit-border-radius:5px;
+				border-radius:5px;
+				padding:25px;
+				text-align:center;
+				font:20pt bold,"Vollkorn";color:#bbb
+			}
+			#panel {
+				border:2px solid #333;
+				-moz-border-radius:5px;
+				-webkit-border-radius:5px;
+				border-radius:5px;
+				padding:25px;
+				text-align:center;
+				font:20pt bold,"Vollkorn";color:#bbb
+			}
+			body {
+			  background-color: #3e94ec;
+			  font-family: "Roboto", helvetica, arial, sans-serif;
+			  font-size: 12px;
+			  font-weight: 400;
+			  text-rendering: optimizeLegibility;
+			}
+
+			div.table-title {
+			   display: block;
+			  margin: auto;
+			  max-width: 600px;
+			  padding:5px;
+			  width: 100%;
+			}
+
+			.table-title h3 {
+			   color: #fafafa;
+			   font-size: 30px;
+			   font-weight: 400;
+			   font-style:normal;
+			   font-family: "Roboto", helvetica, arial, sans-serif;
+			   text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+			   text-transform:uppercase;
+			}
+
+
+			/*** Table Styles **/
+
+			.table-fill {
+			  background: white;
+			  border-radius:3px;
+			  border-collapse: collapse;
+			  height: 320px;
+			  margin: auto;
+			  max-width: 600px;
+			  padding:5px;
+			  width: 100%;
+			  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+			  animation: float 5s infinite;
+			}
+
+			th {
+			  color:#D5DDE5;;
+			  background:#1b1e24;
+			  border-bottom:4px solid #9ea7af;
+			  border-right: 1px solid #343a45;
+			  font-size:14px;
+			  font-weight: 100;
+			  padding:12px;
+			  text-align:center;
+			  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+			  vertical-align:middle;
+			}
+
+			th:first-child {
+			  border-top-left-radius:3px;
+			}
+
+			th:last-child {
+			  border-top-right-radius:3px;
+			  border-right:none;
+			}
+
+			tr {
+			  border-top: 1px solid #C1C3D1;
+			  border-bottom-: 1px solid #C1C3D1;
+			  color:#666B85;
+			  font-size:12px;
+			  font-weight:normal;
+			  text-shadow: 0 1px 1px rgba(256, 256, 256, 0.1);
+			}
+
+			tr:hover td {
+			  background:#4E5066;
+			  color:#FFFFFF;
+			  border-top: 1px solid #22262e;
+			  border-bottom: 1px solid #22262e;
+			}
+
+			tr:first-child {
+			  border-top:none;
+			}
+
+			tr:last-child {
+			  border-bottom:none;
+			}
+
+			tr:nth-child(odd) td {
+			  background:#EBEBEB;
+			}
+
+			tr:nth-child(odd):hover td {
+			  background:#4E5066;
+			}
+
+			tr:last-child td:first-child {
+			  border-bottom-left-radius:3px;
+			}
+
+			tr:last-child td:last-child {
+			  border-bottom-right-radius:3px;
+			}
+
+			td {
+			  background:#FFFFFF;
+			  padding:10px;
+			  text-align:center;
+			  vertical-align:middle;
+			  font-weight:300;
+			  font-size:12px;
+			  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+			  border-right: 1px solid #C1C3D1;
+			}
+
+			td:last-child {
+			  border-right: 0px;
+			}
+
+			th.text-left {
+			  text-align: left;
+			}
+
+			th.text-center {
+			  text-align: center;
+			}
+
+			th.text-right {
+			  text-align: right;
+			}
+
+			td.text-left {
+			  text-align: left;
+			}
+
+			td.text-center {
+			  text-align: center;
+			}
+
+			td.text-right {
+			  text-align: right;
+			}
+`		</style>
+	</head>
+	<body>
+		<div id="drop">Drop an XLSX / XLSM / XLSB / ODS / XLS / XML file here to see sheet data</div>
+		<div id="panel">
+			<button onclick="process()">process</button>
+			<button onclick="reset()">reset</button>
+			<button onclick="undo()">undo</button>
+			<button onclick="toJsonObjeect()">to json</button>
+			<button onclick="cloneMergeCells()">cloneMergeCells</button>
+			<button onclick="rotate()">rotate</button>
+			<br/>
+			<input type="Number" placeholder="Row or Column" id="val">
+			<button onclick="deleteRow(document.getElementById('val').value)">DeleteRow</button>
+			<button onclick="deleteCol(document.getElementById('val').value)">DeleteCol</button>
+			<button onclick="setRowToHeader(document.getElementById('val').value)">setRowToHeader</button>
+			<button onclick="removeRowFromHeader(document.getElementById('val').value)">removeRowFromHeader</button>
+			<br/>
+			<input type="Number" placeholder="Column" id="column">
+			<input type="text" placeholder="Type: ('s', 'n', 'b', 'd')" id="type">
+			<button onclick="changeColType(document.getElementById('column').value, document.getElementById('type').value)">changeColType</button>
+			<br/>
+			<input type="Number" placeholder="Row" id="rowIndex">
+			<input type="Number" placeholder="Col" id="colIndex">
+			<input type="text" placeholder="value" id="value">
+			<button onclick="changeHeaderValue(document.getElementById('rowIndex').value, document.getElementById('colIndex').value, document.getElementById('value').value)">changeHeaderValue</button>
+			<button onclick="setTableName(document.getElementById('value').value)">setTableName</button>
+			<br/>
+		</div>
+		<br />
+		<table class="table-fill" id="table">
+
+		</table>
+
+		<script type="text/javascript" src="bundle.js" charset="utf-8"></script>
+		<script>
+
+		var drop = document.getElementById('drop');
+		var tbl = {};
+
+		function showData(tbl){
+			var sheet = tbl;
+			//console.log(sheet);
+			var data = "<tr><th colspan='"+ (tbl.columnTypes.length + 1) +"'>" + tbl.meta.tableName + "</th></tr>";
+			data += "<tr><th></th>" ;
+			for (var i = 0; i < sheet.columnTypes.length; i++){
+				data += "<th>" + sheet.columnTypes[i] + "</th>";
+			}
+			data += "</tr>";
+			for (var i = 0; i <= sheet.headerDepth; i++) {
+				data += "<tr><th></th>";
+				for (var j = 0; j < sheet.rows[i].length; j++) {
+					data += "<th>" + sheet.rows[i][j] + "</th>";
+				}
+				data += "</tr>";
+			}
+			data += "</tr>";
+			for (var i = sheet.headerDepth + 1; i < sheet.rows.length; i++) {
+				data += "<tr><td>" + (i - sheet.headerDepth) + "</td>";
+				for (var j = 0; j < sheet.rows[i].length; j++) {
+					//if (sheet["rows"][i][j].typeMissMatch == true) {
+					if (sheet.rows[i][j] == null) {
+						data += "<td style='background-color:#00F;'>" + sheet.rows[i][j] + "</td>";
+					} else{
+						data += "<td>" + sheet.rows[i][j] + "</td>";
+					}
+				}
+				data += "</tr>";
+			}
+			document.getElementById("table").innerHTML = data;
+
+		}
+
+		function handleDrop(e) {
+			//console.log("handleDrop");
+			e.stopPropagation();
+			e.preventDefault();
+			rABS = true;
+			use_worker = true;
+			var files = e.dataTransfer.files;
+			var f = files[0];
+			// Api.process_file(f, function (res){
+			// 	var sheet = res[Object.keys(res)[0]];
+			// 	console.log(res);
+			// 	tbl = res;
+			// 	//tbl[0].process();
+			// 	showData(tbl[0]);
+			// });
+			//var worker = new Worker("xlsxworker2.js");
+			var tables;
+			FlatFileApi.process_file(f, function(res) {
+				tbl = res;
+				console.log(tbl);
+				showData(tbl[0]);
+				//tbl = tables[0];
+			})
+			// worker.onmessage = function(e) {
+			// 	worker.postMessage(f);
+			// 	//console.log(JSON.parse(e.data));
+			// 	tables = JSON.parse(e.data);
+			// 	tbl = tables;
+			// 	showData(tables[0]);
+			// };
+		}
+
+		function handleDragover(e) {
+			//console.log("handleDragover");
+			e.stopPropagation();
+			e.preventDefault();
+			e.dataTransfer.dropEffect = 'copy';
+		}
+
+		function process() {
+			tbl[0].process();
+			showData(tbl[0]);
+		}
+
+		function reset(){
+			tbl[0].reset();
+			showData(tbl[0]);
+		}
+
+		function undo(){
+			tbl[0].simpleUndo();
+			showData(tbl[0]);
+		}
+
+		function deleteRow(index) {
+			tbl[0].deleteRow(index);
+			showData(tbl[0]);
+		}
+
+		function deleteCol(index) {
+			tbl[0].deleteCol(index);
+			showData(tbl[0]);
+		}
+
+		function setRowToHeader(index) {
+			tbl[0].setRowToHeader(index);
+			showData(tbl[0]);
+		}
+
+		function removeRowFromHeader(index) {
+			tbl[0].removeRowFromHeader(index);
+			showData(tbl[0]);
+		}
+
+		function changeColType(index, type) {
+			tbl[0].changeColType(index, type);
+			showData(tbl[0]);
+		}
+
+		function changeHeaderValue(rowIndex, colIndex, value) {
+			tbl[0].changeHeaderValue(rowIndex, colIndex, value);
+			showData(tbl[0]);
+		}
+
+		function setTableName(value) {
+			tbl[0].setTableName(value);
+			showData(tbl[0]);
+		}
+
+		function toJsonObjeect() {
+			var j = tbl[0].to_json();
+			console.log(j);
+		}
+
+		function cloneMergeCells() {
+			tbl[0].cloneMergeCells();
+			showData(tbl[0]);
+		}
+
+		function rotate() {
+			tbl[0].rotate();
+			showData(tbl[0]);
+		}
+
+		if(drop.addEventListener) {
+			drop.addEventListener('dragenter', handleDragover, false);
+			drop.addEventListener('dragover', handleDragover, false);
+			drop.addEventListener('drop', handleDrop, false);
+		}
+		</script>
+	</body>
+</html>
