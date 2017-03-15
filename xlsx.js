@@ -11918,6 +11918,7 @@ function loadTable(sheet, table) {
 				// if (val.t == "n" && val.w != undefined) {
 				// 	console.log(val);
 				// 	console.log(Date.parse(val.w));
+				// 	console.log(SSF.parse_date_code(val.w));
 				// }
         cell = new Table.Cell(val.v, val.t, row, col);
       } else {

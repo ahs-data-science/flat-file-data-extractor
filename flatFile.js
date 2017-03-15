@@ -24,7 +24,7 @@ function s2ab(s) {
 function xw_xfer(data, mimeType, fileType, cb) {
   var val = s2ab(data);
   var v;
-  v = X.read(ab2str(val[1]), {type: 'binary'});
+  v = X.read(ab2str(val[1]), {type: 'binary', cellDates: true});
   var res = {t:"xlsx", d:JSON.stringify(v)};
   var r = s2ab(res.d)[1];
   xx = ab2str(r).replace(/\n/g,"\\n").replace(/\r/g,"\\r");

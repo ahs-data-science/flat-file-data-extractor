@@ -6585,6 +6585,7 @@ function initTableView() {
   }
   // --------------------------------- \\
 
+
   // -------- set column names ------- \\
   for (var i = 0; i < tbl.cols.length; i++) {
     tv.columnNames.push(null);
@@ -6624,14 +6625,14 @@ function process() {
   for (C = 0; C < tbl.cols.length; C++) {
     if (isEmptyTableList(tbl.cols[C].cells)) {
       //console.log(C);
-      deleteCol(tv, tbl.cols[C].id);
-      //tv.deleteCol(tv.meta.colIds[tbl.cols[C].id]);
+      //deleteCol(tv, tbl.cols[C].id);
+      tv.deleteCol(tv.meta.colIds.indexOf(tbl.cols[C].id));
     }
   }
   for (R = 0; R < tbl.rows.length; R++) {
     if (isEmptyTableList(tbl.rows[R].cells)) {
-      deleteRow(tv, tbl.rows[R].id);
-      //tv.deleteRow(tv.meta.rowIds[tbl.rows[R].id]);
+      //deleteRow(tv, tbl.rows[R].id);
+      tv.deleteRow(tv.meta.rowIds.indexOf(tbl.rows[R].id));
     }
   }
   // --------------------------------- \\
@@ -6699,17 +6700,19 @@ function process() {
   }
 
   // --------------------------------- \\
+  //console.log(tv.rows);
   // ----------- clean data ---------- \\
+  var colIndex = 0;
   for (var i = 0; i < tbl.cols.length; i++) {
     if (tbl.cols[i].isDeleted) {
       continue;
     }
     var cleanData = cleanCol(tbl, tbl.cols[i]);
     //console.log(cleanData);
-    var colIndex = tv.headerDepth + 1;
     for (var j = 0; j < cleanData.length; j++) {
-      tv.rows[j][colIndex++] = cleanData[j];
+      tv.rows[j][colIndex] = cleanData[j];
     }
+    colIndex++;
   }
   // --------------------------------- \\
 
@@ -6823,7 +6826,8 @@ function jsonExport() {
     for (var j = 0; j <= tv.headerDepth; j++) {
       cName += tv.rows[j][i] + " ";
     }
-    column.name = cName;
+    /* - 1 for extra space at end */
+    column.name = cName.substring(0, cName.length - 1);
     jsonObj.columns.push(column);
   }
   //console.log(jsonObj);
@@ -19116,6 +19120,7 @@ function loadTable(sheet, table) {
 				// if (val.t == "n" && val.w != undefined) {
 				// 	console.log(val);
 				// 	console.log(Date.parse(val.w));
+				// 	console.log(SSF.parse_date_code(val.w));
 				// }
         cell = new Table.Cell(val.v, val.t, row, col);
       } else {
@@ -45960,7 +45965,7 @@ function s2ab(s) {
 function xw_xfer(data, mimeType, fileType, cb) {
   var val = s2ab(data);
   var v;
-  v = X.read(ab2str(val[1]), {type: 'binary'});
+  v = X.read(ab2str(val[1]), {type: 'binary', cellDates: true});
   var res = {t:"xlsx", d:JSON.stringify(v)};
   var r = s2ab(res.d)[1];
   xx = ab2str(r).replace(/\n/g,"\\n").replace(/\r/g,"\\r");
