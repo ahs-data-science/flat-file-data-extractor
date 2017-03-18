@@ -127,6 +127,13 @@ function cleanCol(table, col) {
       data.push(String(val.v));
     } else if (type == 'n'){
       data.push(Number(val.v));
+    } else if (type == 'd') {
+      var d = new Date(val.v);
+      if ( d == "Invalid Date") {
+        data.push(null);
+      } else {
+        data.push(d);
+      }
     } else {
       data.push(null);
     }
@@ -805,20 +812,33 @@ function jsonExport() {
     /* - 1 for extra space at end */
     column.name = cName.substring(0, cName.length - 1);
     jsonObj.columns.push(column);
+
   }
-  //console.log(jsonObj);
-  //console.log(tv.rows);
-  jsonObj.rows = cloneArray(tv.rows);
-  jsonObj.rows.splice(0, tv.headerDepth + 1);
-  // for (var i = tv.headerDepth + 1; i < tv.rows.length; i++) {
-  //   var row = new Array();
-  //   //console.log(tv.rows[3]);
-  //   for (var j = 0; j < tv.columnTypes.length; i++) {
-  //     row.push(tv.rows[i][j]);
-  //     //console.log(tv.rows[j][i]);
-  //   }
-  //   jsonObj.rows.push(row);
-  // }
+
+  //jsonObj.rows = cloneArray(tv.rows);
+  //jsonObj.rows.splice(0, tv.headerDepth + 1);
+
+  var rows = new Array();
+  for (var i = 0; i < tv.rows.length; i++) {
+    if ( i <= tv.headerDepth) {
+      continue;
+    }
+    var rowIndex = i - tv.headerDepth;
+    var row = new Array();
+    for (var j = 0; j < tv.rows[rowIndex].length; j++) {
+      if (tv.columnTypes[j] == 'd') {
+        var d = new Date(tv.rows[rowIndex][j]);
+        if ( d == "Invalid Date") {
+          d = new Date("1970-01-01 " + tv.rows[rowIndex][j]);
+        }
+        row.push(d.getTime() - d.getTimezoneOffset()*60*1000);
+      } else {
+        row.push(tv.rows[rowIndex][j]);
+      }
+    }
+    rows.push(row);
+  }
+  jsonObj.rows = rows;
 
   return jsonObj;
 }

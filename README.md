@@ -50,5 +50,35 @@ set a row to header
 remove a row from header
 note : the row must be on the top of table
 */
-tbl.setRowToHeader();
-tbl.removeFromHeader();
+tbl.setRowToHeader(index);
+tbl.removeFromHeader(index);
+
+/*
+
+*/
+tbl.changeColType(index, type);
+
+/*
+
+*/
+tbl.changeHeaderValue(rowIndex, colIndex, value);
+
+/*
+
+*/
+tbl.setTableName(name);
+
+/*
+
+*/
+tbl.cloneMergeCells();
+
+/*
+
+*/
+tbl.rotate();
+
+/*
+
+*/
+tbl.export();
