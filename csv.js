@@ -13,6 +13,34 @@ module.exports = {
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
+  function isDate(str, order){
+    if(order== undefined) order= Date.ddmm? 0: 1;
+    var day, month, D= Date.parse(str);
+    if(D){
+        str= str.split(/\W+/);
+
+        // check for a month name first:
+        if(/\D/.test(str[0])) day= str[1];
+        else if (/\D/.test(str[1])) day= str[0];
+        else{
+            day= str[order];
+            month= order? 0: 1;
+            month= parseInt(str[month], 10) || 13;
+        }
+        try{
+            D = new Date(D);
+            if(D.getDate()== parseInt(day, 10)){
+                if(!month || D.getMonth()== month-1) return true;
+            }
+        }
+        catch(er){}
+    }
+    return false;
+    // sol 2
+    // var d = new Date(str);
+    // return d.toString() === 'Invalid Date'? false: true;
+  }
+
   function getType(val){
     if (isNumeric(val) == true){
       return 'n';
@@ -21,7 +49,9 @@ module.exports = {
       return 'b';
     }
     // date detection
-
+    if (isDate(val)) {
+      return 'd';
+    }
     //
     if (val != ""){
       return 's';
@@ -54,10 +84,10 @@ module.exports = {
         sheet.data[i][j] = cell;
       }
     }
-    
+
     sheet.s = {r: 0, c: 0};
     sheet.e = {r: sheet.data.length - 1, c: maxLen - 1};
-    
+
     return sheet;
     //console.log(sheet);
   }
@@ -140,16 +170,16 @@ module.exports = {
   	}
   	return typeOfCols;
   }
-  
+
   function loadTable(sheet, table) {
-    
+
     if (sheet == null) {
       // error
       return 1;
     }
     // set cols & rows
     range = sheet;
-    
+
     for (R = range.s.r; R <= range.e.r; R++) {
       var row = new Table.Row();
       table.rows.push(row);
@@ -159,7 +189,7 @@ module.exports = {
       table.cols.push(col);
     }
 
-    // set cells & col.uniqueValues 
+    // set cells & col.uniqueValues
     for (R = range.s.r; R <= range.e.r; R++) {
       row = table.rows[R];
       for (C = range.s.c; C <= range.e.c; C++) {

@@ -12,23 +12,52 @@ module.exports = {
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
+  function isDate(str, order){
+    if(order== undefined) order= Date.ddmm? 0: 1;
+    var day, month, D= Date.parse(str);
+    if(D){
+        str= str.split(/\W+/);
+
+        // check for a month name first:
+        if(/\D/.test(str[0])) day= str[1];
+        else if (/\D/.test(str[1])) day= str[0];
+        else{
+            day= str[order];
+            month= order? 0: 1;
+            month= parseInt(str[month], 10) || 13;
+        }
+        try{
+            D = new Date(D);
+            if(D.getDate()== parseInt(day, 10)){
+                if(!month || D.getMonth()== month-1) return true;
+            }
+        }
+        catch(er){}
+    }
+    return false;
+    // sol 2
+    // var d = new Date(str);
+    // return d.toString() === 'Invalid Date'? false: true;
+  }
+
   function getType(val){
     if (isNumeric(val) == true){
       return 'n';
     }
-    //console.log("c", val);
-    if (val.toUpperCase() == "TRUE" || val.toUpperCase() == "FALSE" || val.toUpperCase() == "T" || val.toUpperCase() == "F"){
+    if (val.toUpperCase() == "TRUE" || val.toUpperCase() == "FALSE" || val.toUpperCase() == "T" || val.toUpperCase() == "F")     {
       return 'b';
     }
     // date detection
-
+    if (isDate(val)) {
+      return 'd';
+    }
     //
     if (val != ""){
       return 's';
     }
     return 'e';
   }
-
+  
   function findData(sheet){
     var data = [];
     for (var obj in sheet){
@@ -95,7 +124,7 @@ module.exports = {
   	}
   	return typeOfCols;
   }
-  
+
   function loadTable(sheet, table) {
     if (sheet == null) {
       // error
@@ -104,10 +133,10 @@ module.exports = {
     // set cols & rows & cells
     var header = [];
     var col;
-    
+
     var row = new Table.Row();
     table.rows.push(row);
-    
+
     for (var i = 0; i < sheet.length; i++) {
       var row = new Table.Row();
       table.rows.push(row);
@@ -141,13 +170,13 @@ module.exports = {
         C++;
       }
     }
-    
+
     // set mergedCells
     table.meta.mergedCells = null;
-    
-    return 0; 
+
+    return 0;
   }
-  
+
   function sheet_to_row_object(){
 
     var tbl = this;

@@ -1,6 +1,6 @@
 {
   "name": "flat-file-data-extractor",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "main" : "bundle.js",
   "ignore": [
     "bower.json",
