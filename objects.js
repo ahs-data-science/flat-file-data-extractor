@@ -806,8 +806,19 @@ function jsonExport() {
     }
 
     var cName = "";
+    var cNames = new Array();
     for (var j = 0; j <= tv.headerDepth; j++) {
-      cName += tv.rows[j][i] + " ";
+      var temp = cNames.pop();
+      if (temp == tv.rows[j][i]) {
+        cNames.push(temp);
+        continue;
+      } else if (temp !== undefined){
+        cNames.push(temp);
+      }
+      cNames.push(tv.rows[j][i]);
+    }
+    for (var j = 0; j < cNames.length; j++) {
+      cName += cNames[j] + " ";
     }
     /* - 1 for extra space at end */
     column.name = cName.substring(0, cName.length - 1);
