@@ -11536,7 +11536,8 @@ function readSync(data, opts) {
 			//console.log("forth");
 			if(isfile) o.type = "file";
 			return read_zip(data, opts);
-		default: throw new Error("Unsupported file " + n);
+		//default: throw new Error("Unsupported file " + n);
+		default: throw "unsupported_file";
 	}
 }
 

@@ -102,6 +102,7 @@ function TableView(table) {
 }
 // ------------------------------- \\
 
+// ------------Actions------------ \\
 function cleanCol(table, col) {
   // s, n, d, b, e
   var data = [];
@@ -252,6 +253,7 @@ function findColType(table, col) {
     col.type = 's';
   }
 }
+// ------------------------------- \\
 
 // ------------ METHODS -------------\\
 // TODO : logs of methods are useless
@@ -822,7 +824,13 @@ function jsonExport() {
     }
     /* - 1 for extra space at end */
     column.name = cName.substring(0, cName.length - 1);
-    jsonObj.columns.push(column);
+    if (jsonObj.columns.indexOf(column.trim()) != -1 ) {
+      throw "conflict_column_name";
+    }
+    if (column.trim().length >= 64) {
+      throw "too_long_column_name";
+    }
+    jsonObj.columns.push(column.trim());
 
   }
 
