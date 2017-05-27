@@ -5967,6 +5967,7 @@ function TableView(table) {
 // ------------Actions------------ \\
 function cleanCol(table, col) {
   // s, n, d, b, e
+  // n = int, double, long
   var data = [];
   var type = col.type;
   var val;
@@ -5986,9 +5987,19 @@ function cleanCol(table, col) {
       data.push(val.v);
       continue;
     }
-    if (type == 's'){
+    if (val.v == null) {
+      data.push(null);
+      continue;
+    }
+    if (type == 's') {
       data.push(String(val.v));
-    } else if (type == 'n'){
+    } else if (type == 'n') {
+      data.push(Number(val.v));
+    } else if (type == 'int') {
+      data.push(Number(val.v));
+    } else if (type == 'long') {
+      data.push(Number(val.v));
+    } else if (type == 'double') {
       data.push(Number(val.v));
     } else if (type == 'd') {
       var d = new Date(val.v);
@@ -6077,6 +6088,25 @@ function getHeaderDepth(table) {
 	return max;
 }
 
+function fixCellType(table) {
+  for (R = 0; R < table.rows.length; R++) {
+    for (C = 0; C < table.cols.length; C++) {
+      if (table.rows[R].cells[C].t == 'n') {
+        var value = parseFloat(table.rows[R].cells[C].v);
+        //console.log(value);
+        if (value % 1 !== 0) {
+          table.rows[R].cells[C].t = "double";
+        } else if ( value >= -2147483648 && value <= 2147483647) {
+          table.rows[R].cells[C].t = "int";
+        } else {
+          table.rows[R].cells[C].t = "long";
+        }
+      }
+    }
+  }
+
+}
+
 function findColType(table, col) {
   // s, n, d, b, e
   var types = [];
@@ -6094,24 +6124,39 @@ function findColType(table, col) {
     } else {
       continue;
     }
-
+    if (cellType == 'e') {
+      continue;
+    }
     if (cellType == 's') {
       flag = 1;
       break;
     } else {
-      if (types.length != 0 && types.indexOf(cellType) == -1) {
-        flag = 1;
-        break;
-      } else {
+      if (types.indexOf(cellType) == -1) {
         types.push(cellType);
       }
-
     }
   }
-  if (flag == 0){
+  if (types.length > 1) {
+    // type is n
+    if (types.indexOf('d') == -1 && types.indexOf('b') == -1) {
+      if (types.indexOf("double") != -1) {
+        col.type = "double";
+      } else if (types.indexOf("long") != -1) {
+        col.type = "long";
+      } else {
+        col.type = "int";
+      }
+    } else {
+      //console.log(types);
+      col.type = 's';
+    }
+  } else if (flag == 0) {
     //typeOfCols.push(cellType);
-    col.type = cellType;
+    col.type = types[0];
   } else {
+    col.type = 's';
+  }
+  if (col.type == undefined) {
     col.type = 's';
   }
 }
@@ -6411,7 +6456,7 @@ function initTableView() {
   tv.columnNames = new Array();
   tv.headerDepth = 0;
 
-  // intt table values
+  // init table values
   tbl.rows[0].isHeader = true;
   //
 
@@ -6422,7 +6467,13 @@ function initTableView() {
     var row = new Array();
     for (var C = 0; C < tbl.cols.length; C++) {
       var val = tbl.rows[R].cells[C].v;
-      row.push(val);
+      var type = tbl.rows[R].cells[C].t;
+      if (type == undefined || type == "e") {
+        row.push(null);
+        tbl.rows[R].cells[C].v = null;
+      } else {
+        row.push(val);
+      }
       if (tv.meta.colIds.indexOf(tbl.cols[C].id) == -1) {
         tv.meta.colIds.push(tbl.cols[C].id);
       }
@@ -6437,6 +6488,10 @@ function initTableView() {
   for (var i = 0; i < tbl.cols.length; i++) {
     tv.columnNames.push(null);
   }
+  // --------------------------------- \\
+
+  // --------- fix cell type --------- \\
+  fixCellType(tbl);
   // --------------------------------- \\
 
   // -------- find column type ------- \\
@@ -6656,6 +6711,15 @@ function jsonExport() {
       case 's':
         column.type = "string";
         break;
+      case 'int':
+        column.type = "int";
+        break;
+      case 'long':
+        column.type = "long";
+        break;
+      case 'double':
+        column.type = "double";
+        break;
       case 'n':
         column.type = "numeric";
         break;
@@ -6685,14 +6749,17 @@ function jsonExport() {
       cName += cNames[j] + " ";
     }
     /* - 1 for extra space at end */
-    column.name = cName.substring(0, cName.length - 1);
-    if (jsonObj.columns.indexOf(column.trim()) != -1 ) {
-      throw "conflict_column_name";
+    column.name = cName.substring(0, cName.length - 1).trim();
+    for (var j = 0; j < jsonObj.columns.length; j++) {
+      if (jsonObj.columns[j].name == column.name ) {
+        throw "conflict_column_name";
+        break;
+      }
     }
-    if (column.trim().length >= 64) {
+    if (column.name.length >= 64) {
       throw "too_long_column_name";
     }
-    jsonObj.columns.push(column.trim());
+    jsonObj.columns.push(column);
 
   }
 
@@ -19084,12 +19151,14 @@ function loadTable(sheet, table) {
 				// }
 				//console.log(val);
 				// only set for date type
-				if (val.peymanType !== undefined){
+				if (val.peymanType !== undefined && val.t == 'n' && Math.round(val.v*10)/10 != parseFloat(val.w.split(",").join(""))) {
+					//console.log(format_cell(val));
         	cell = new Table.Cell((format_cell(val)), 'd');
 				} else {
-        	cell = new Table.Cell(format_cell(val), val.t);
+        	cell = new Table.Cell(val.v, val.t);
 				}
       } else {
+				// console.log("peyman");
         cell = new Table.Cell(null, undefined);
       }
       row.cells.push(cell);

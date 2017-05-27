@@ -11958,12 +11958,14 @@ function loadTable(sheet, table) {
 				// }
 				//console.log(val);
 				// only set for date type
-				if (val.peymanType !== undefined){
+				if (val.peymanType !== undefined && val.t == 'n' && Math.round(val.v*10)/10 != parseFloat(val.w.split(",").join(""))) {
+					//console.log(format_cell(val));
         	cell = new Table.Cell((format_cell(val)), 'd');
 				} else {
-        	cell = new Table.Cell(format_cell(val), val.t);
+        	cell = new Table.Cell(val.v, val.t);
 				}
       } else {
+				// console.log("peyman");
         cell = new Table.Cell(null, undefined);
       }
       row.cells.push(cell);
