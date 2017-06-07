@@ -255,7 +255,11 @@
 			// });
 			//var worker = new Worker("xlsxworker2.js");
 			var tables;
-			FlatFileApi.processFile(f, function(res) {
+			FlatFileApi.processFile(f, function(err, res) {
+				if (err != null) {
+					console.log("hey roozegar ghaddaar!!");
+					return;
+				}
 				tbl = res;
 				console.log(tbl);
 				showData(tbl[0]);

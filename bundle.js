@@ -46668,13 +46668,18 @@ function s2ab(s) {
 }
 
 function xw_xfer(data, mimeType, fileType, cb) {
-  var val = s2ab(data);
-  var v;
-  v = X.read(ab2str(val[1]), {type: 'binary', cellDates: true});
-  var res = {t:"xlsx", d:JSON.stringify(v)};
-  var r = s2ab(res.d)[1];
-  xx = ab2str(r).replace(/\n/g,"\\n").replace(/\r/g,"\\r");
-  to_object(JSON.parse(xx), mimeType, fileType, cb);
+  try {
+    var val = s2ab(data);
+    var v;
+    v = X.read(ab2str(val[1]), {type: 'binary', cellDates: true});
+    var res = {t:"xlsx", d:JSON.stringify(v)};
+    var r = s2ab(res.d)[1];
+    xx = ab2str(r).replace(/\n/g,"\\n").replace(/\r/g,"\\r");
+    to_object(JSON.parse(xx), mimeType, fileType, cb);
+  } catch (e) {
+    cb(e, null);
+  }
+
 }
 
 function to_object(workbook, mimeType, fileType, cb) {
@@ -46692,7 +46697,7 @@ function to_object(workbook, mimeType, fileType, cb) {
     tv.initTableView();
     tables.push(tv);
   });
-  cb(tables);
+  cb(null, tables);
 }
 
 function getFileExtension(filename) {
